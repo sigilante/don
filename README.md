@@ -15,4 +15,4 @@ Syntax
 Argument: a variable number of +-family expressions.
 ```
 
-![](logo.jpg)
+![](logo.webp)
