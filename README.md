@@ -1,13 +1,18 @@
-#   Sunrise:  A schematic agent to brighten your day
+#   `%don`: Online `man` pages for `docs.urbit.org`
 
-Use Sunrise to start a new “empty” Urbit app project.  Import the repo, then simply rename all text and files from `sunrise` to whatever your new agent's name will be.  Run `./rename.sh new-name` to replace all instances of `sunrise` with `new-name` throughout.
+**WIP ~2024.7.3. Concept being fleshed out.**
 
-You should place Sunrise in a directory next to `urbit` (the main Urbit repo) and `landscape` from Tlon.  Copy from it using `cp -rL` to resolve symlinks.
+```
+dojo> |link %don
 
-Sunrise is modestly opinionated but generally straightforward.  If you are interested in having the `++abet` nested-core pattern in your agent, see [Moonrise](https://github.com/sigilante/moonrise).
+::  Ctrl-X
+
+don> |%
+|% "barcen"
+Produce a core, [battery payload].
+
+Syntax
+Argument: a variable number of +-family expressions.
+```
 
 ![](logo.jpg)
-
-Prior art:
-
-- ~rabsef-bicrym and Dalten Collective, [`agent-skeleton`](https://github.com/dalten-collective/agent-skeleton)
