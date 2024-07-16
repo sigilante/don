@@ -40,15 +40,15 @@
 ++  parse-pages
   |=  raw=(list (pair cord cord))
   ^-  pages
-  =|  =pages
+  =|  pages=(list (pair cord cord))
   |-
-  ?~  raw  pages
-  $(raw t.raw, pages (~(uni by pages) (fission i.raw)))
+  ~&  >>  "{<(lent raw)>} pages left to parse."
+  ?~  raw  (malt pages)
+  ~&  >>  "  {<p.i.raw>} up."
+  $(raw t.raw, pages (weld (fission i.raw) pages))
 ::
 ++  fission
   |=  =(pair cord cord)
-  ^-  pages
-  %-  malt
   ^-  (list (^pair page cord))
   ::  We have several kinds of incoming files to
   ::  parse into data.  Since this is reference
@@ -60,22 +60,25 @@
   ::  - /system/identity
   ::  - /system/kernel
   ::  - /userspace/threads
-  ?+    (cut 3 [0 6] p.pair)  !!
-      %'glossa'
+  ?+    (cut 3 [0 3] p.pair)  !!
+      %'glo'
     (process-glossary pair)
     ::
-      %'langua'
+      %'lan'
+    ?+  (cut 3 [9 4] p.pair)  !!
+      %'hoon'  (process-hoon pair)
+      %'nock'  (process-nock pair)
+    ==
+    ::
+      %'sys'
     ~
     ::
-      %'system'
-    ~
-    ::
-      %'usersp'
+      %'use'
     ~
   ==
 ++  process-glossary
   |=  =(pair cord cord)
-  ^-  (list (^pair page cord))
+  ^-  (list (^pair cord cord))
   ::  Each glossary entry is in its own file, so it's
   ::  easy to parse out.
   :~  :-  (cut 3 [(lent "glossary/") (sub (lent (trip p.pair)) (add (lent ".md") (lent "glossary/")))] p.pair)
@@ -91,9 +94,154 @@
       =.  sxn  `trip`(swag [beg end] sxn)
       (crip sxn)
   ==
-++  process-hoon  !!
-++  process-nock  !!
+++  process-hoon
+  |=  =(pair cord cord)
+  ^-  (list (^pair cord cord))
+  ::  Each Hoon entry is sewn into a bundle on each
+  ::  page, so we need to parse out the individual
+  ::  entries.
+  ::  language/hoon/reference/rune/cen
+  |^
+  ~&  >>>  (cut 3 [24 4] p.pair)
+  ?+    (cut 3 [24 4] p.pair)
+             (process-main pair)
+    %'limb'  (process-hoon-limb pair)
+    %'rune'  (process-hoon-rune pair)
+    %'stdl'  (process-hoon-stdlib pair)
+    %'zuse'  (process-hoon-zuse pair)
+  ==
+  ++  process-main
+    |=  =(^pair cord cord)
+    ^-  (list (^^pair cord cord))
+    ~
+  ++  process-hoon-limb
+    |=  =(^pair cord cord)
+    ^-  (list (^^pair cord cord))
+    ~
+  ++  process-hoon-rune
+    |=  =(^pair cord cord)
+    ^-  (list (^^pair cord cord))
+    ::  Grab the header for the rune type, then
+    ::  the rest of the entries with <h2> title.
+    =/  body  (trip q.pair)
+    =/  sxns  (split-all:se body "+++")
+    =/  runes  (split-all:se (snag 2 sxns) "\0a## ")
+    =/  fam  (cut 3 [0 3] (crip (head (flop (split-all:se (trip p.pair) "/")))))
+    ::  Treat constants separately.
+    ?:  =('con' fam)  ~
+    %+  weld
+      ^-  (list (^^pair cord cord))
+      ::  Treat terminators separately.
+      ?:  =('ter' fam)  ~
+      ~[[(~(got by larua) fam) (crip (snag 0 runes))]]
+    ^-  (list (^^pair cord cord))
+    %+  weld
+      %+  turn
+        (slag 1 runes)
+      |=  =tape
+      ^-  (^^pair cord cord)
+      :-  (crip (slag 2 (scag 3 tape)))
+      (crip (slag 15 tape))
+    %+  turn
+      (slag 1 runes)
+    |=  =tape
+    ^-  (^^pair cord cord)
+    ~&  >>  (crip (scag 6 (slag 6 tape)))
+    :-  (crip (scag 6 (slag 6 tape)))
+    (crip (slag 15 tape))
+  ++  process-hoon-stdlib
+    |=  =(^pair cord cord)
+    ^-  (list (^^pair cord cord))
+    ~
+  ++  process-hoon-zuse
+    |=  =(^pair cord cord)
+    ^-  (list (^^pair cord cord))
+    ~
+  --
+++  process-nock
+  |=  =(pair cord cord)
+  ^-  (list (^pair cord cord))
+  ~&  >>>  pair
+  ~
 ++  process-identity  !!
 ++  process-kernel  !!
 ++  process-threads  !!
+::
+++  aural
+  ^~
+  ^-  (map cord cord)
+  %-  malt
+  ^-  (list (pair cord cord))
+  :~  :-  '|'   'bar'
+      :-  '\\'  'bas'
+      :-  '$'   'buc'
+      :-  '_'   'cab'
+      :-  '%'   'cen'
+      :-  ':'   'col'
+      :-  ','   'com'
+      :-  '"'   'doq'
+      :-  '.'   'dot'
+      :-  '/'   'fas'
+      :-  '<'   'gal'
+      :-  '>'   'gar'
+      :-  '#'   'hax'
+      :-  '-'   'hep'
+      :-  '{'   'kel'
+      :-  '}'   'ker'
+      :-  '^'   'ket'
+      :-  '+'   'lus'
+      :-  ';'   'mic'
+      :-  '('   'pal'
+      :-  '&'   'pam'
+      :-  ')'   'par'
+      :-  '@'   'pat'
+      :-  '['   'sel'
+      :-  ']'   'ser'
+      :-  '~'   'sig'
+      :-  '\''  'soq'
+      :-  '*'   'tar'
+      :-  '`'   'tic'
+      :-  '='   'tis'
+      :-  '?'   'wut'
+      :-  '!'   'zap'
+  ==
+::
+++  larua
+  ^~
+  ^-  (map cord cord)
+  %-  malt
+  ^-  (list (pair cord cord))
+  :~  :-  'bar'  '|'
+      :-  'bas'  '\\'
+      :-  'buc'  '$'
+      :-  'cab'  '_'
+      :-  'cen'  '%'
+      :-  'col'  ':'
+      :-  'com'  ','
+      :-  'doq'  '"'
+      :-  'dot'  '.'
+      :-  'fas'  '/'
+      :-  'gal'  '<'
+      :-  'gar'  '>'
+      :-  'hax'  '#'
+      :-  'hep'  '-'
+      :-  'kel'  '{'
+      :-  'ker'  '}'
+      :-  'ket'  '^'
+      :-  'lus'  '+'
+      :-  'mic'  ';'
+      :-  'pal'  '('
+      :-  'pam'  '&'
+      :-  'par'  ')'
+      :-  'pat'  '@'
+      :-  'sel'  '['
+      :-  'ser'  ']'
+      :-  'sig'  '~'
+      :-  'soq'  '\''
+      :-  'tar'  '*'
+      :-  'tic'  '`'
+      :-  'tis'  '='
+      :-  'wut'  '?'
+      :-  'zap'  '!'
+  ==
 --
