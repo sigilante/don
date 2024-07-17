@@ -1,6 +1,6 @@
 #   `%don`: Online `man` pages for `docs.urbit.org`
 
-**WIP ~2024.7.15. Code being produced actively.**
+**WIP ~2024.7.16. Working prototype.**
 
 `%don` keeps a cache of online documentation from [`docs.urbit.org`](https://docs.urbit.org)
 queryable by developers at the command-line interface.
