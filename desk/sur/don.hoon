@@ -7,6 +7,9 @@
 +$  load   cord
 +$  pages  (map page load)
 ::
++$  versioned-state
+  $%  state-zero
+  ==
 +$  state-zero
   $:  %zero
       =pages

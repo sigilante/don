@@ -3,11 +3,13 @@
 ::
 /-  *don
 /+  re=regex,
-    se=seq
+    se=seq,
+    shoe,
+    sole
 |%
 ++  take-action
-  |=  [act=action =bowl:gall]
-  ^-  (list card:agent:gall)
+  |=  [act=action =bowl:gall state=versioned-state]
+  ^-  (list card:agent:shoe)
   ?-    -.act
       %sync
     =/  tid  `@ta`(cat 3 'thread_' (scot %uv (sham eny.bowl)))
@@ -28,14 +30,28 @@
     ==  ==
     ::
       %find
-    ~&  >  cord.act
-    ~
+    :~  :+  %shoe  ~
+        ^-  shoe-effect:shoe
+        :-  %sole
+        ^-  sole-effect:sole  :-  %klr
+        ^-  styx
+        =/  rng  ~(. og eny:bowl)
+        =^  huer  rng  (rads:rng 256)
+        =^  hueg  rng  (rads:rng 256)
+        =^  hueb  rng  (rads:rng 256)
+        =/  res  (find-text cord.act pages.state)
+        ?~  res  `styx`~[[[`%br ~ `[r=`@ux`huer g=`@ux`hueg b=`@ux`hueb]] 'not found' ~]]
+        `styx`~[[[`%br ~ `[r=`@ux`huer g=`@ux`hueg b=`@ux`hueb]] (need res) ~]]
+    ==
   ==
 ::
 ++  find-text
   |=  [=cord =pages]
   ^-  (unit page)
-  !!
+  ::  First, try the name alone.
+  =/  res  (~(get by pages) cord)
+  ?:  !=(~ res)  res
+  ~
 ::
 ++  parse-pages
   |=  raw=(list (pair cord cord))
@@ -71,10 +87,14 @@
     ==
     ::
       %'sys'
-    ~
+    ?+  (cut 3 [7 4] p.pair)  !!
+      %'iden'  ~ :: (process-identity pair)
+      %'kern'  ~ :: (process-kernel pair)
+      %'runt'  ~ :: no runtime docs for now
+    ==
     ::
       %'use'
-    ~
+    ~ :: (process-threads pair)
   ==
 ++  process-glossary
   |=  =(pair cord cord)
@@ -102,7 +122,7 @@
   ::  entries.
   ::  language/hoon/reference/rune/cen
   |^
-  ~&  >>>  (cut 3 [24 4] p.pair)
+  ~&  >>>  `@t`(cut 3 [24 4] p.pair)
   ?+    (cut 3 [24 4] p.pair)
              (process-main pair)
     %'limb'  (process-hoon-limb pair)
@@ -125,7 +145,7 @@
     ::  the rest of the entries with <h2> title.
     =/  body  (trip q.pair)
     =/  sxns  (split-all:se body "+++")
-    =/  runes  (split-all:se (snag 2 sxns) "\0a## ")
+    =/  runes  (split-all:se (snag 2 sxns) "\0a## `")
     =/  fam  (cut 3 [0 3] (crip (head (flop (split-all:se (trip p.pair) "/")))))
     ::  Treat constants separately.
     ?:  =('con' fam)  ~
@@ -140,19 +160,32 @@
         (slag 1 runes)
       |=  =tape
       ^-  (^^pair cord cord)
-      :-  (crip (slag 2 (scag 3 tape)))
+      :-  (crip (scag 2 tape))
       (crip (slag 15 tape))
     %+  turn
       (slag 1 runes)
     |=  =tape
     ^-  (^^pair cord cord)
-    ~&  >>  (crip (scag 6 (slag 6 tape)))
-    :-  (crip (scag 6 (slag 6 tape)))
+    :-  (crip (scag 6 (slag 5 tape)))
     (crip (slag 15 tape))
   ++  process-hoon-stdlib
     |=  =(^pair cord cord)
     ^-  (list (^^pair cord cord))
-    ~
+    ::  Grab the header for the rune type, then
+    ::  the rest of the entries with <h2> title.
+    =/  body  (trip q.pair)
+    =/  sxns  (split-all:se body "+++")
+    =/  arms  (split-all:se (snag 2 sxns) "\0a## `")
+    %+  turn
+      (slag 1 arms)
+    |=  =tape
+    ^-  (^^pair cord cord)
+    =/  end  (need (find "`" tape))
+    =/  title  (cut 3 [2 (dec (dec end))] (crip tape))
+    ~&  :-  `@t`title
+      (crip (slag +(+(end)) tape))
+    :-  `@t`title
+    (crip (slag +(+(end)) tape))
   ++  process-hoon-zuse
     |=  =(^pair cord cord)
     ^-  (list (^^pair cord cord))
@@ -161,11 +194,19 @@
 ++  process-nock
   |=  =(pair cord cord)
   ^-  (list (^pair cord cord))
-  ~&  >>>  pair
   ~
-++  process-identity  !!
-++  process-kernel  !!
-++  process-threads  !!
+++  process-identity
+  |=  =(pair cord cord)
+  ^-  (list (^pair cord cord))
+  ~
+++  process-kernel
+  |=  =(pair cord cord)
+  ^-  (list (^pair cord cord))
+  ~
+++  process-threads
+  |=  =(pair cord cord)
+  ^-  (list (^pair cord cord))
+  ~
 ::
 ++  aural
   ^~

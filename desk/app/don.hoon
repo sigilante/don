@@ -9,9 +9,6 @@
     sole,
     verb
 |%
-+$  versioned-state
-  $%  state-zero
-  ==
 +$  card  card:agent:shoe
 +$  command  @t
 --
@@ -44,7 +41,7 @@
   ?+    mark  (on-poke:default mark vase)
       %don-action
     :_  this
-    (take-action !<(action vase) bowl)
+    (take-action !<(action vase) bowl state)
     ::
       %sole-action
     [~ this]
@@ -94,25 +91,7 @@
 ++  on-command
   |=  [=sole-id:shoe =command]
   ^-  (quip card _this)
-  :_  this
-  ^-  (list card)
-  :~  :+  %shoe  ~
-  ^-  shoe-effect:shoe
-  :-  %sole
-  ^-  sole-effect:sole  :-  %klr
-  ^-  styx
-  =/  idx  0
-  =|  fx=styx
-  =/  rng  ~(. og eny:bowl)
-  |-
-  ?:  =(80 idx)  fx
-  =^  huer  rng  (rads:rng 256)
-  =^  hueg  rng  (rads:rng 256)
-  =^  hueb  rng  (rads:rng 256)
-  %=  $
-    idx  +(idx)
-    fx   `styx`(weld fx `styx`~[[[`%br ~ `[r=`@ux`huer g=`@ux`hueg b=`@ux`hueb]] command ~]])
-  ==  ==
+  (on-poke [%don-action !>([%find command])])
 ++  can-connect
   |=  =sole-id:shoe
   ^-  ?
