@@ -25,7 +25,8 @@
     leather  ~(. (default:shoe this command) bowl)
 ++  on-init
   ^-  [(list card) _this]
-  [~ this]
+  :_  this
+  (take-action !<(action !>([%sync ~])) bowl state)
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
