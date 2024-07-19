@@ -2,6 +2,12 @@
 
 **WIP ~2024.7.16. Working prototype.**
 
+- The docs cache works.
+- No full-text search yet.
+- Display is staggered rather than carriage-returned.
+
+---
+
 `%don` keeps a cache of online documentation from [`docs.urbit.org`](https://docs.urbit.org)
 queryable by developers at the command-line interface.
 
